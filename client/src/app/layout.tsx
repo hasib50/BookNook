@@ -1,5 +1,6 @@
 
 import type { Metadata } from "next";
+// @ts-expect-error - CSS imports are handled by Next.js
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+   <html lang="en">
+  <body suppressHydrationWarning>
         <Toaster
           position="top-right"
           toastOptions={{
