@@ -59,3 +59,15 @@ app.get("/books", async (req, res) => {
     res.status(500).json({ message: "Could not load books." });
   }
 });
+
+// One book (public endpoint; page access is controlled in the client).
+app.get("/books/:id", async (req, res) => {
+  try {
+    if (!validId(req.params.id)) return res.status(400).json({ message: "Invalid book ID." });
+    const book = await books.findOne({ _id: new ObjectId(req.params.id) });
+    if (!book) return res.status(404).json({ message: "Book not found." });
+    res.json(book);
+  } catch {
+    res.status(500).json({ message: "Could not load this book." });
+  }
+});
