@@ -1,0 +1,363 @@
+
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* ========================================
+   BOOKNOOK — PREMIUM DESIGN SYSTEM
+======================================== */
+
+:root {
+  --background: #faf8f2;
+  --foreground: #24352c;
+  --primary: #244b3b;
+  --primary-dark: #173b30;
+  --primary-light: #e7eee8;
+  --gold: #c39a50;
+  --gold-light: #e5b978;
+  --muted: #777d75;
+  --card: #fffefa;
+  --border: #e9e6dc;
+  --paper-dark: #f0eee5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* ========================================
+   LAYOUT
+======================================== */
+
+.container-custom,
+.site-container {
+  width: min(1200px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+main {
+  min-height: 60vh;
+}
+
+/* ========================================
+   TYPOGRAPHY
+======================================== */
+
+.section-label,
+.eyebrow {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.section-title {
+  color: var(--foreground);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+/* ========================================
+   NAVIGATION
+======================================== */
+
+.nav-link {
+  color: #5e6c62;
+  font-size: 13px;
+  font-weight: 650;
+  transition: color 0.25s ease;
+}
+
+.nav-link:hover {
+  color: var(--gold);
+}
+
+/* ========================================
+   BUTTONS
+======================================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 23px;
+  background: var(--primary-dark);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  background: var(--gold);
+  box-shadow: 0 10px 24px #244b3b20;
+}
+
+.btn-outline,
+.btn-outline-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid #ded9ce;
+  border-radius: 999px;
+  padding: 11px 20px;
+  background: transparent;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover,
+.btn-outline-soft:hover {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+/* ========================================
+   HERO SLIDER
+======================================== */
+
+.booknook-hero {
+  border-radius: 28px;
+  background: var(--primary-dark);
+  box-shadow: 0 24px 60px #203d3415;
+}
+
+.booknook-hero .swiper-slide {
+  overflow: hidden;
+}
+
+.booknook-hero .swiper-pagination {
+  bottom: 25px !important;
+  text-align: left;
+  padding-left: 40px;
+}
+
+.booknook-hero .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0 5px !important;
+  background: white;
+  opacity: 0.45;
+  transition: all 0.3s ease;
+}
+
+.booknook-hero .swiper-pagination-bullet-active {
+  width: 25px;
+  border-radius: 10px;
+  background: var(--gold-light);
+  opacity: 1;
+}
+
+/* ========================================
+   BOOK CARDS
+======================================== */
+
+.book-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: 0 8px 25px #253b2c08;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-7px);
+  border-color: #d8c9aa;
+  box-shadow: 0 20px 40px #24352c14;
+}
+
+.book-cover-wrap {
+  position: relative;
+  display: block;
+  height: 260px;
+  overflow: hidden;
+  background: #eeece4;
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.book-card:hover .book-cover {
+  transform: scale(1.07);
+}
+
+/* ========================================
+   FORMS
+======================================== */
+
+.form-panel {
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--card);
+  padding: clamp(20px, 4vw, 38px);
+  box-shadow: 0 18px 55px #263c2e0a;
+}
+
+.field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  color: #385448;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.input-field {
+  width: 100%;
+  border: 1px solid #e4dfd4;
+  border-radius: 11px;
+  background: white;
+  padding: 13px 14px;
+  color: var(--foreground);
+  outline: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.25s ease;
+}
+
+.input-field:focus {
+  border-color: #648a75;
+  box-shadow: 0 0 0 3px #648a751a;
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+.fade-up {
+  animation: fadeUp 0.7s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   SCROLLBAR
+======================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #a5b3a8;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+  .booknook-hero {
+    border-radius: 22px;
+  }
+
+  .booknook-hero .swiper-pagination {
+    padding-left: 25px;
+  }
+
+  .book-cover-wrap {
+    height: 230px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container-custom,
+  .site-container {
+    width: calc(100% - 32px);
+  }
+
+  .booknook-hero {
+    border-radius: 20px;
+  }
+
+  .book-cover-wrap {
+    height: 220px;
+  }
+
+  .booknook-hero .swiper-pagination {
+    bottom: 16px !important;
+    padding-left: 20px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
