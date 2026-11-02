@@ -1,0 +1,4 @@
+"use client";
+import {useEffect,useState}from"react";import{useParams}from"next/navigation";import api from"@/lib/api";import type{Book}from"@/types/book";import Protected from"@/components/Protected";import BookForm from"@/components/BookForm";
+function EditContent(){const{id}=useParams<{id:string}>();const[book,setBook]=useState<Book|null>(null);useEffect(()=>{api.get(`/books/${id}`).then(r=>setBook(r.data)).catch(()=>setBook(null));},[id]);return <section className="site-container max-w-3xl py-16"><p className="eyebrow">Update your contribution</p><h1 className="section-title mb-8 mt-3">Edit book<span className="text-[#c18a47]">.</span></h1>{book?<BookForm initial={book}/>:<span className="loading loading-spinner loading-lg"/>}</section>}
+export default function EditPage(){return <Protected><EditContent/></Protected>}
