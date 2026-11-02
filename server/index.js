@@ -40,3 +40,22 @@ function validId(id) {
 
 app.get("/health", (_req, res) => res.json({ status: "ok", service: "BookNook API" }));
 
+// Public: all books. Supports optional category and search query.
+app.get("/books", async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.category && req.query.category !== "All") filter.category = req.query.category;
+    if (req.query.search) {
+      const term = String(req.query.search).trim();
+      filter.$or = [
+        { title: { $regex: term, $options: "i" } },
+        { author: { $regex: term, $options: "i" } }
+      ];
+    }
+    const limit = Math.min(Number(req.query.limit) || 100, 100);
+    const result = await books.find(filter).sort({ createdAt: -1 }).limit(limit).toArray();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Could not load books." });
+  }
+});
