@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -16,6 +15,8 @@ import {
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import ThemeToggle from "./ThemeToggle";
+import Avatar from "./Avatar";
 
 const navigation = [
   { label: "Home", href: "/" },
@@ -32,9 +33,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const links = navigation.filter(
-    (item) => !item.private || session
-  );
+  const links = navigation.filter((item) => !item.private || session);
 
   const isActive = (href: string) =>
     href === "/"
@@ -63,12 +62,8 @@ export default function Navbar() {
 
       <nav className="border-b border-[#e9e4d9] bg-[#faf8f2]/95 shadow-[0_5px_25px_rgba(30,50,38,0.04)] backdrop-blur-2xl">
         <div className="container-custom flex h-[76px] items-center justify-between">
-
           {/* Logo */}
-          <Link
-            href="/"
-            className="group flex shrink-0 items-center gap-3"
-          >
+          <Link href="/" className="group flex shrink-0 items-center gap-3">
             <motion.span
               whileHover={{ rotate: -8, scale: 1.06 }}
               className="grid h-11 w-11 place-items-center rounded-xl bg-[#173b30] text-[#e7c78f] shadow-lg shadow-[#173b30]/15"
@@ -121,8 +116,10 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Desktop authentication */}
+          {/* Desktop theme toggle + authentication */}
           <div className="hidden items-center gap-3 xl:flex">
+            <ThemeToggle />
+
             {isPending ? (
               <span className="loading loading-spinner loading-sm text-[#173b30]" />
             ) : session ? (
@@ -131,17 +128,12 @@ export default function Navbar() {
                   onClick={() => setProfileOpen(!profileOpen)}
                   className="flex items-center gap-2 rounded-full border border-[#e7e2d7] bg-white/70 py-1.5 pl-1.5 pr-3 transition-all hover:border-[#c69a56] hover:shadow-md"
                 >
-                  {session.user.image ? (
-                    <img
-                      src={session.user.image}
-                      alt="User avatar"
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-[#e9eee8] text-[#173b30]">
-                      <UserRound size={17} />
-                    </span>
-                  )}
+                  <Avatar
+                    src={session.user.image}
+                    name={session.user.name}
+                    className="h-8 w-8"
+                    iconSize={17}
+                  />
 
                   <span className="max-w-[105px] truncate text-xs font-bold text-[#173b30]">
                     {session.user.name}
@@ -209,22 +201,26 @@ export default function Navbar() {
                   Register
                   <ArrowUpRight
                     size={15}
-                    className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                   />
                 </Link>
               </>
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle navigation menu"
-            aria-expanded={mobileOpen}
-            className="grid h-10 w-10 place-items-center rounded-lg border border-[#e7e2d7] text-[#173b30] transition hover:bg-[#e9eee8] xl:hidden"
-          >
-            {mobileOpen ? <X size={21} /> : <Menu size={21} />}
-          </button>
+          {/* Mobile: theme toggle + menu button */}
+          <div className="flex items-center gap-2 xl:hidden">
+            <ThemeToggle />
+
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileOpen}
+              className="grid h-10 w-10 place-items-center rounded-lg border border-[#e7e2d7] text-[#173b30] transition hover:bg-[#e9eee8]"
+            >
+              {mobileOpen ? <X size={21} /> : <Menu size={21} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile navigation */}
@@ -276,17 +272,12 @@ export default function Navbar() {
                   <div className="mt-5 space-y-3">
                     {/* Mobile user information */}
                     <div className="flex items-center gap-3 rounded-xl border border-[#e7e2d7] bg-white p-3">
-                      {session.user.image ? (
-                        <img
-                          src={session.user.image}
-                          alt="User avatar"
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="grid h-10 w-10 place-items-center rounded-full bg-[#e9eee8] text-[#173b30]">
-                          <UserRound size={19} />
-                        </span>
-                      )}
+                      <Avatar
+                        src={session.user.image}
+                        name={session.user.name}
+                        className="h-10 w-10"
+                        iconSize={19}
+                      />
 
                       <div className="min-w-0">
                         <p className="truncate text-sm font-bold text-[#173b30]">

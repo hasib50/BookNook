@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 // @ts-expect-error - CSS imports are handled by Next.js
 import "./globals.css";
@@ -15,14 +14,21 @@ export const metadata: Metadata = {
     "Explore a world of stories. Discover, share, and borrow your favorite books with BookNook.",
 };
 
+// Page load e theme flash (white -> dark) ranodhar jonno
+// paint howar age saved theme set kore dey
+const themeScript = `(function(){try{var t=localStorage.getItem("booknook-theme")||"light";document.documentElement.setAttribute("data-theme",t)}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-   <html lang="en">
-  <body suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body suppressHydrationWarning>
         <Toaster
           position="top-right"
           toastOptions={{

@@ -3,6 +3,7 @@
 
 import Protected from "@/components/Protected";
 import { authClient } from "@/lib/auth-client";
+import Avatar from "@/components/Avatar";
 
 function ProfileContent() {
   const { data: session } = authClient.useSession();
@@ -17,16 +18,13 @@ function ProfileContent() {
       </h1>
 
       <div className="form-panel mt-8 flex items-center gap-5">
-        {session?.user.image ? (
-          <img
-            src={session.user.image}
-            className="h-20 w-20 rounded-full object-cover"
-          />
-        ) : (
-          <div className="grid h-20 w-20 place-items-center rounded-full bg-[#eae9df] text-2xl">
-            {session?.user.name?.[0]}
-          </div>
-        )}
+        <Avatar
+  src={session?.user.image}
+  name={session?.user.name}
+  className="h-20 w-20 text-2xl"
+  iconSize={32}
+  showInitial
+/>
 
         <div>
           <h2 className="text-xl font-bold">

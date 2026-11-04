@@ -6,11 +6,13 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import type { Book } from "@/types/book";
+import { authClient } from "@/lib/auth-client";
 
 const categories = ["Fiction", "Science", "History", "Kids", "Others"];
 
 export default function BookForm({ initial }: { initial?: Book }) {
   const router = useRouter();
+  const { data: session } = authClient.useSession();
 
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -227,6 +229,29 @@ export default function BookForm({ initial }: { initial?: Book }) {
             className="input-field"
           />
         </label>
+
+        {/* Added by (read-only) */}
+{!initial && (
+  <>
+    <label className="field-label">
+      Your name
+      <input
+        readOnly
+        value={session?.user.name || ""}
+        className="input-field cursor-not-allowed opacity-70"
+      />
+    </label>
+
+    <label className="field-label">
+      Your email
+      <input
+        readOnly
+        value={session?.user.email || ""}
+        className="input-field cursor-not-allowed opacity-70"
+      />
+    </label>
+  </>
+)}
 
         {/* Book Cover */}
         <label className="field-label md:col-span-2">
