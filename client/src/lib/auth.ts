@@ -1,3 +1,4 @@
+
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import clientPromise from "@/lib/mongodb";
@@ -15,12 +16,22 @@ export const auth = betterAuth({
 
   secret: process.env.BETTER_AUTH_SECRET,
 
+  // Email and Password Authentication
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 6,
     autoSignIn: false,
   },
 
+  // Account Linking
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google"],
+    },
+  },
+
+  // Google OAuth
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -28,6 +39,7 @@ export const auth = betterAuth({
     },
   },
 
+  // Trusted Origins
   trustedOrigins: [
     process.env.BETTER_AUTH_URL || "http://localhost:3000",
   ],
