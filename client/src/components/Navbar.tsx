@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   BookOpen,
@@ -33,6 +33,8 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
+  const profileRef = useRef<HTMLDivElement>(null);
+
   const links = navigation.filter((item) => !item.private || session);
 
   const isActive = (href: string) =>
@@ -40,7 +42,45 @@ export default function Navbar() {
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
 
+  // Close the profile dropdown when clicking outside it or pressing Escape
+  useEffect(() => {
+    if (!profileOpen) return;
+
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setProfileOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setProfileOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [profileOpen]);
+
+  // Close the dropdown and the mobile menu whenever the page changes
+  useEffect(() => {
+    setProfileOpen(false);
+    setMobileOpen(false);
+  }, [pathname]);
+
   async function logout() {
+    setProfileOpen(false);
+
     try {
       await authClient.signOut();
       toast.success("Logged out successfully!");
@@ -123,9 +163,11 @@ export default function Navbar() {
             {isPending ? (
               <span className="loading loading-spinner loading-sm text-[#173b30]" />
             ) : session ? (
-              <div className="relative">
+              <div className="relative" ref={profileRef}>
                 <button
-                  onClick={() => setProfileOpen(!profileOpen)}
+                  onClick={() => setProfileOpen((open) => !open)}
+                  aria-haspopup="menu"
+                  aria-expanded={profileOpen}
                   className="flex items-center gap-2 rounded-full border border-[#e7e2d7] bg-white/70 py-1.5 pl-1.5 pr-3 transition-all hover:border-[#c69a56] hover:shadow-md"
                 >
                   <Avatar
@@ -150,6 +192,7 @@ export default function Navbar() {
                 <AnimatePresence>
                   {profileOpen && (
                     <motion.div
+                      role="menu"
                       initial={{ opacity: 0, y: 10, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.96 }}
@@ -167,6 +210,7 @@ export default function Navbar() {
 
                       <Link
                         href="/profile"
+                        role="menuitem"
                         onClick={() => setProfileOpen(false)}
                         className="mt-1 flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-[#535d53] transition hover:bg-[#edf1e9] hover:text-[#173b30]"
                       >
@@ -175,6 +219,7 @@ export default function Navbar() {
                       </Link>
 
                       <button
+                        role="menuitem"
                         onClick={logout}
                         className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50"
                       >
