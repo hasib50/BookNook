@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -10,12 +9,23 @@ import { authClient } from "@/lib/auth-client";
 
 const categories = ["Fiction", "Science", "History", "Kids", "Others"];
 
+function isValidImageUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export default function BookForm({ initial }: { initial?: Book }) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
 
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [imageMode, setImageMode] = useState<"upload" | "url">("upload");
+  const [previewFailed, setPreviewFailed] = useState(false);
 
   const [form, setForm] = useState({
     title: initial?.title || "",
@@ -77,22 +87,19 @@ export default function BookForm({ initial }: { initial?: Book }) {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(
-          data.error?.message || "Image upload failed."
-        );
+        throw new Error(data.error?.message || "Image upload failed.");
       }
 
       setForm((old) => ({
         ...old,
         image: data.data.url,
       }));
+      setPreviewFailed(false);
 
       toast.success("Cover image uploaded successfully!");
     } catch (error) {
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Image upload failed."
+        error instanceof Error ? error.message : "Image upload failed."
       );
     } finally {
       setUploading(false);
@@ -106,7 +113,14 @@ export default function BookForm({ initial }: { initial?: Book }) {
     if (busy || uploading) return;
 
     if (!form.image.trim()) {
-      toast.error("Please upload a book cover image.");
+      toast.error("Please upload a cover image or paste an image URL.");
+      return;
+    }
+
+    if (!isValidImageUrl(form.image.trim())) {
+      toast.error(
+        "Please enter a valid image URL starting with http:// or https://"
+      );
       return;
     }
 
@@ -136,9 +150,7 @@ export default function BookForm({ initial }: { initial?: Book }) {
       }
 
       toast.success(
-        initial
-          ? "Book updated successfully!"
-          : "Book added to the library!"
+        initial ? "Book updated successfully!" : "Book added to the library!"
       );
 
       router.push("/my-books");
@@ -154,14 +166,11 @@ export default function BookForm({ initial }: { initial?: Book }) {
         };
 
         toast.error(
-          apiError.response?.data?.message ||
-            "Something went wrong."
+          apiError.response?.data?.message || "Something went wrong."
         );
       } else {
         toast.error(
-          error instanceof Error
-            ? error.message
-            : "Something went wrong."
+          error instanceof Error ? error.message : "Something went wrong."
         );
       }
     } finally {
@@ -231,50 +240,95 @@ export default function BookForm({ initial }: { initial?: Book }) {
         </label>
 
         {/* Added by (read-only) */}
-{!initial && (
-  <>
-    <label className="field-label">
-      Your name
-      <input
-        readOnly
-        value={session?.user.name || ""}
-        className="input-field cursor-not-allowed opacity-70"
-      />
-    </label>
+        {!initial && (
+          <>
+            <label className="field-label">
+              Your name
+              <input
+                readOnly
+                value={session?.user.name || ""}
+                className="input-field cursor-not-allowed opacity-70"
+              />
+            </label>
 
-    <label className="field-label">
-      Your email
-      <input
-        readOnly
-        value={session?.user.email || ""}
-        className="input-field cursor-not-allowed opacity-70"
-      />
-    </label>
-  </>
-)}
+            <label className="field-label">
+              Your email
+              <input
+                readOnly
+                value={session?.user.email || ""}
+                className="input-field cursor-not-allowed opacity-70"
+              />
+            </label>
+          </>
+        )}
 
         {/* Book Cover */}
-        <label className="field-label md:col-span-2">
+        <div className="field-label md:col-span-2">
           Book cover image
 
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={(e) => uploadImage(e.target.files?.[0])}
-            className="input-field file-input"
-            disabled={uploading || busy}
-          />
+          <div className="mt-2 inline-flex w-fit rounded-xl border border-[#e9e4d9] p-1">
+            {(["upload", "url"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setImageMode(mode)}
+                className={`rounded-lg px-4 py-2 text-xs font-bold transition ${
+                  imageMode === mode
+                    ? "bg-[#173b30] text-white"
+                    : "text-[#68766c] hover:text-[#173b30]"
+                }`}
+              >
+                {mode === "upload" ? "Upload image" : "Paste image URL"}
+              </button>
+            ))}
+          </div>
 
-          <span className="text-xs font-normal text-[#8b9189]">
-            Upload a JPG, PNG or WebP cover. Maximum size 5 MB.
-            {uploading && " Uploading image..."}
-          </span>
+          {imageMode === "upload" ? (
+            <div key="upload-mode">
+              <input
+                key="cover-file-input"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => uploadImage(e.target.files?.[0])}
+                className="input-field file-input mt-3"
+                disabled={uploading || busy}
+              />
 
-          {form.image && (
+              <span className="mt-2 block text-xs font-normal text-[#8b9189]">
+                Upload a JPG, PNG or WebP cover. Maximum size 5 MB.
+                {uploading && " Uploading image..."}
+              </span>
+            </div>
+          ) : (
+            <div key="url-mode">
+              <input
+                key="cover-url-input"
+                type="text"
+                inputMode="url"
+                name="image"
+                value={form.image}
+                onChange={(e) => {
+                  change(e);
+                  setPreviewFailed(false);
+                }}
+                placeholder="https://example.com/book-cover.jpg"
+                className="input-field mt-3"
+                disabled={busy}
+              />
+
+              <span className="mt-2 block text-xs font-normal text-[#8b9189]">
+                Paste a direct link to a JPG, PNG or WebP image.
+              </span>
+            </div>
+          )}
+
+          {form.image && !previewFailed && (
             <div className="mt-4">
               <img
                 src={form.image}
                 alt="Book cover preview"
+                referrerPolicy="no-referrer"
+                onError={() => setPreviewFailed(true)}
                 className="h-48 w-36 rounded-xl border border-[#e9e4d9] object-cover shadow-sm"
               />
 
@@ -284,7 +338,13 @@ export default function BookForm({ initial }: { initial?: Book }) {
               </p>
             </div>
           )}
-        </label>
+
+          {form.image && previewFailed && (
+            <p className="mt-3 text-xs text-[#b45d4e]">
+              This image could not be loaded. Please check the link.
+            </p>
+          )}
+        </div>
 
         {/* Description */}
         <label className="field-label md:col-span-2">
