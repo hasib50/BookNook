@@ -166,12 +166,13 @@ function BooksContent() {
               />
 
               <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by book title or author..."
-                className="input-field h-[48px] pl-11 pr-4"
-              />
+  type="text"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  placeholder="Search by book title or author..."
+  className="input-field has-icon-left h-[48px]"
+  style={{ paddingRight: search ? 44 : 14 }}
+/>
 
               {search && (
                 <button
