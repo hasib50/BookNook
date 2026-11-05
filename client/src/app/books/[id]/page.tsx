@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
@@ -31,10 +31,7 @@ function BookDetailsContent() {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    document.title = book ? `BookNook | ${book.title}` : "BookNook | Book Details";
-  }, [book]);
-
+  
   useEffect(() => {
     const controller = new AbortController();
 
