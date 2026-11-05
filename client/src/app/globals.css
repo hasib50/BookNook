@@ -548,3 +548,27 @@ body {
 [data-theme="dark"] .bg-\[\#faf8f2\]\/90 {
   background-color: rgb(14 25 20 / 0.9);
 }
+
+/* ========================================
+   DARK MODE — missing text colors
+======================================== */
+
+/* headings that were still dark green (book card title, details page) */
+[data-theme="dark"] .text-\[\#203d34\],
+[data-theme="dark"] .text-\[\#203e31\],
+[data-theme="dark"] .text-\[\#315343\],
+[data-theme="dark"] .text-\[\#456453\] {
+  color: #e6eee8;
+}
+
+/* body / muted text that was too dim on dark background */
+[data-theme="dark"] .text-\[\#68766d\],
+[data-theme="dark"] .text-\[\#59695e\],
+[data-theme="dark"] .text-\[\#718076\],
+[data-theme="dark"] .text-\[\#718078\],
+[data-theme="dark"] .text-\[\#69776e\],
+[data-theme="dark"] .text-\[\#607267\],
+[data-theme="dark"] .text-\[\#65806e\],
+[data-theme="dark"] .text-\[\#9a8e7b\] {
+  color: #9db0a3;
+}
