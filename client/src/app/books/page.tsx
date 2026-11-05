@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -27,14 +26,13 @@ const categories = [
   "Others",
 ];
 
-export default function BooksPage() {
+function BooksContent() {
   const searchParams = useSearchParams();
 
   const initialCategory = searchParams.get("category");
 
   const validCategory = categories.find(
-    (item) =>
-      item.toLowerCase() === initialCategory?.toLowerCase()
+    (item) => item.toLowerCase() === initialCategory?.toLowerCase()
   );
 
   const [books, setBooks] = useState<Book[]>([]);
@@ -58,7 +56,7 @@ export default function BooksPage() {
         });
 
         setBooks(response.data);
-      } catch (error) {
+      } catch {
         if (!controller.signal.aborted) {
           setBooks([]);
         }
@@ -80,8 +78,7 @@ export default function BooksPage() {
   };
 
   return (
-    <main className="min-h-screen pb-20">
-
+    <div className="min-h-screen pb-20">
       {/* PAGE HERO */}
       <section className="relative overflow-hidden bg-[#173b30] py-20 md:py-28">
         <div className="pointer-events-none absolute -right-20 -top-36 h-[420px] w-[420px] rounded-full border border-white/10" />
@@ -104,15 +101,13 @@ export default function BooksPage() {
             <h1 className="font-serif text-5xl font-bold leading-tight text-white md:text-7xl">
               Explore All
               <br />
-              <span className="italic text-[#e5b978]">
-                Books.
-              </span>
+              <span className="italic text-[#e5b978]">Books.</span>
             </h1>
 
             <p className="mt-6 max-w-xl text-sm leading-8 text-white/65 md:text-base">
-              Find a story, discover a new perspective, or
-              explore something you have never read before.
-              Your next favorite book might be waiting here.
+              Find a story, discover a new perspective, or explore something
+              you have never read before. Your next favorite book might be
+              waiting here.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3 text-xs font-semibold text-white/60">
@@ -134,7 +129,6 @@ export default function BooksPage() {
 
       {/* COLLECTION */}
       <section className="container-custom pt-16">
-
         {/* SECTION HEADING */}
         <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
           <div>
@@ -158,14 +152,12 @@ export default function BooksPage() {
 
         {/* SEARCH & FILTER PANEL */}
         <div className="mb-10 rounded-2xl border border-[#e9e6dc] bg-white p-5 shadow-[0_8px_30px_rgba(36,53,44,0.04)] md:p-7">
-
           <div className="mb-5 flex items-center gap-2 text-sm font-bold text-[#24352c]">
             <SlidersHorizontal size={17} className="text-[#b18443]" />
             Find Your Book
           </div>
 
           <div className="flex flex-col gap-4 md:flex-row">
-
             {/* SEARCH */}
             <div className="relative flex-1">
               <Search
@@ -237,7 +229,9 @@ export default function BooksPage() {
           <p className="text-sm font-semibold text-[#59695e]">
             {loading
               ? "Finding your books..."
-              : `Showing ${books.length} ${books.length === 1 ? "book" : "books"}`}
+              : `Showing ${books.length} ${
+                  books.length === 1 ? "book" : "books"
+                }`}
           </p>
 
           {(search || category !== "All") && (
@@ -252,13 +246,13 @@ export default function BooksPage() {
         </div>
 
         {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-[370px] animate-pulse rounded-2xl border border-[#e9e6dc] bg-white"
-              />
-            ))}
+          <div className="grid min-h-[420px] place-items-center">
+            <div className="flex flex-col items-center gap-4">
+              <span className="loading loading-spinner loading-lg text-[#31594c]" />
+              <p className="text-sm font-medium text-[#7c887f]">
+                Finding your books...
+              </p>
+            </div>
           </div>
         ) : books.length > 0 ? (
           <motion.div
@@ -305,14 +299,11 @@ export default function BooksPage() {
             </h3>
 
             <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-[#7c887f]">
-              We could not find any books matching your search.
-              Try another title or explore a different category.
+              We could not find any books matching your search. Try another
+              title or explore a different category.
             </p>
 
-            <button
-              onClick={clearFilters}
-              className="btn-primary mt-7"
-            >
+            <button onClick={clearFilters} className="btn-primary mt-7">
               Clear Filters
               <ArrowRight size={16} />
             </button>
@@ -333,15 +324,26 @@ export default function BooksPage() {
             </p>
           </div>
 
-          <Link
-            href="/add-book"
-            className="btn-primary shrink-0"
-          >
+          <Link href="/add-book" className="btn-primary shrink-0">
             Add a Book
             <ArrowRight size={17} />
           </Link>
         </div>
       </section>
-    </main>
+    </div>
+  );
+}
+
+export default function BooksPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="grid min-h-[65vh] place-items-center">
+          <span className="loading loading-spinner loading-lg text-[#31594c]" />
+        </div>
+      }
+    >
+      <BooksContent />
+    </Suspense>
   );
 }
