@@ -6,6 +6,7 @@ import api from "@/lib/api";
 import type { Borrow } from "@/types/book";
 import Protected from "@/components/Protected";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 function BorrowContent() {
   const [items, setItems] = useState<Borrow[]>([]);
@@ -36,8 +37,11 @@ function BorrowContent() {
       setItems((old) => old.filter((x) => x._id !== id));
 
       toast.success("Book returned successfully.");
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Return failed.");
+        } catch (error) {
+      toast.error(
+        (axios.isAxiosError(error) && error.response?.data?.message) ||
+          "Return failed."
+      );
     } finally {
       setBusy("");
     }

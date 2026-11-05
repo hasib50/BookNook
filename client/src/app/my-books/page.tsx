@@ -8,6 +8,7 @@ import Protected from "@/components/Protected";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
+import axios from "axios";
 
 function MyBooksContent() {
   const { data: session } = authClient.useSession();
@@ -43,8 +44,11 @@ function MyBooksContent() {
       setBooks((old) => old.filter((b) => b._id !== id));
 
       toast.success("Book deleted.");
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Delete failed.");
+        } catch (error) {
+      toast.error(
+        (axios.isAxiosError(error) && error.response?.data?.message) ||
+          "Delete failed."
+      );
     }
   }
 
