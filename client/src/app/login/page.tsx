@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -22,29 +21,52 @@ function LoginForm() {
 
     setBusy(true);
 
-    const result = await authClient.signIn.email({
-      email,
-      password,
-    });
+    try {
+      const result = await authClient.signIn.email({
+        email,
+        password,
+      });
 
-    setBusy(false);
+      if (result.error) {
+        toast.error(result.error.message || "Login failed.");
+        return;
+      }
 
-    if (result.error) {
-      toast.error(result.error.message || "Login failed.");
-      return;
+      toast.success("Welcome back!");
+      router.push(callback);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setBusy(false);
     }
-
-    toast.success("Welcome back!");
-    router.push(callback);
   }
 
   async function google() {
     setBusy(true);
 
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: callback,
-    });
+    try {
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), 15000)
+      );
+
+      const result = await Promise.race([
+        authClient.signIn.social({
+          provider: "google",
+          callbackURL: callback,
+        }),
+        timeout,
+      ]);
+
+      if (result?.error) {
+        toast.error(
+          result.error.message || "Google sign-in failed. Please try again."
+        );
+        setBusy(false);
+      }
+    } catch {
+      toast.error("Google sign-in is taking too long. Please try again.");
+      setBusy(false);
+    }
   }
 
   return (
@@ -63,9 +85,7 @@ function LoginForm() {
       </div>
 
       <form onSubmit={login} className="form-panel">
-        <h2 className="font-serif text-3xl font-bold">
-          Sign in
-        </h2>
+        <h2 className="font-serif text-3xl font-bold">Sign in</h2>
 
         <p className="mb-7 mt-2 text-sm text-[#8b9189]">
           Enter your account details to continue.
@@ -93,6 +113,16 @@ function LoginForm() {
           />
         </label>
 
+        <div className="mt-2 text-right">
+          <button
+            type="button"
+            onClick={() => toast("Password reset is coming soon.")}
+            className="text-xs font-bold text-[#a46e30] hover:underline"
+          >
+            Forgot password?
+          </button>
+        </div>
+
         <button
           disabled={busy}
           className="btn-primary mt-6 w-full justify-center"
@@ -117,10 +147,7 @@ function LoginForm() {
 
         <p className="mt-6 text-center text-sm text-[#78857b]">
           New to BookNook?{" "}
-          <Link
-            href="/register"
-            className="font-bold text-[#a46e30]"
-          >
+          <Link href="/register" className="font-bold text-[#a46e30]">
             Create account
           </Link>
         </p>
