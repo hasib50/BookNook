@@ -64,14 +64,21 @@ export default function RegisterPage() {
     }
   }
 
-  async function handleGoogleLogin() {
+   async function handleGoogleLogin() {
     setBusy(true);
 
     try {
-      await authClient.signIn.social({
+      const result = await authClient.signIn.social({
         provider: "google",
         callbackURL: "/",
       });
+
+      if (result?.error) {
+        toast.error(
+          result.error.message || "Google sign-in failed. Please try again."
+        );
+        setBusy(false);
+      }
     } catch {
       toast.error("Google sign-in failed. Please try again.");
       setBusy(false);
