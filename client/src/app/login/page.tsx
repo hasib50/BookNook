@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -5,6 +6,7 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { FcGoogle } from "react-icons/fc";
 
 function LoginForm() {
   const router = useRouter();
@@ -64,13 +66,17 @@ function LoginForm() {
         setBusy(false);
       }
     } catch {
-      toast.error("Google sign-in is taking too long. Please try again.");
+      toast.error(
+        "Google sign-in is taking too long. Please try again."
+      );
       setBusy(false);
     }
   }
 
   return (
     <section className="site-container grid min-h-[75vh] max-w-5xl items-center gap-10 py-14 md:grid-cols-2">
+
+      {/* LEFT CONTENT */}
       <div>
         <p className="eyebrow">Welcome back</p>
 
@@ -84,15 +90,21 @@ function LoginForm() {
         </p>
       </div>
 
+      {/* LOGIN FORM */}
       <form onSubmit={login} className="form-panel">
-        <h2 className="font-serif text-3xl font-bold">Sign in</h2>
+
+        <h2 className="font-serif text-3xl font-bold">
+          Sign in
+        </h2>
 
         <p className="mb-7 mt-2 text-sm text-[#8b9189]">
           Enter your account details to continue.
         </p>
 
+        {/* EMAIL */}
         <label className="field-label">
           Email
+
           <input
             required
             type="email"
@@ -102,8 +114,10 @@ function LoginForm() {
           />
         </label>
 
+        {/* PASSWORD */}
         <label className="field-label mt-5">
           Password
+
           <input
             required
             type="password"
@@ -113,16 +127,20 @@ function LoginForm() {
           />
         </label>
 
+        {/* FORGOT PASSWORD */}
         <div className="mt-2 text-right">
           <button
             type="button"
-            onClick={() => toast("Password reset is coming soon.")}
+            onClick={() =>
+              toast("Password reset is coming soon.")
+            }
             className="text-xs font-bold text-[#a46e30] hover:underline"
           >
             Forgot password?
           </button>
         </div>
 
+        {/* LOGIN BUTTON */}
         <button
           disabled={busy}
           className="btn-primary mt-6 w-full justify-center"
@@ -130,27 +148,38 @@ function LoginForm() {
           {busy ? "Please wait…" : "Login"}
         </button>
 
+        {/* DIVIDER */}
         <div className="my-5 flex items-center gap-3 text-xs text-[#a2a69e]">
           <span className="h-px flex-1 bg-[#e9e4d9]" />
+
           OR CONTINUE WITH
+
           <span className="h-px flex-1 bg-[#e9e4d9]" />
         </div>
 
+        {/* GOOGLE BUTTON */}
         <button
           type="button"
           onClick={google}
           disabled={busy}
           className="btn-outline-soft w-full justify-center"
         >
-          Continue with Google
+          <FcGoogle size={20} />
+          <span>Continue with Google</span>
         </button>
 
+        {/* REGISTER LINK */}
         <p className="mt-6 text-center text-sm text-[#78857b]">
           New to BookNook?{" "}
-          <Link href="/register" className="font-bold text-[#a46e30]">
+
+          <Link
+            href="/register"
+            className="font-bold text-[#a46e30]"
+          >
             Create account
           </Link>
         </p>
+
       </form>
     </section>
   );
