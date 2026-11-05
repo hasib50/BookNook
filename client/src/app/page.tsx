@@ -1,8 +1,7 @@
-
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
@@ -24,6 +23,9 @@ import {
 
 import api from "@/lib/api";
 import BookCard from "@/components/BookCard";
+import Marquee from "@/components/Marquee";
+import BookShelf from "@/components/BookShelf";
+import ReaderReviews from "@/components/ReaderReviews";
 import type { Book } from "@/types/book";
 
 const slides = [
@@ -53,44 +55,6 @@ const slides = [
   },
 ];
 
-const categories = [
-  {
-    name: "Fiction",
-    description: "Stories that take you somewhere new.",
-    icon: "01",
-    image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Science",
-    description: "Explore ideas and discoveries.",
-    icon: "02",
-    image:
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "History",
-    description: "Travel through moments in time.",
-    icon: "03",
-    image:
-      "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Kids",
-    description: "Little stories, big imagination.",
-    icon: "04",
-    image:
-      "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Others",
-    description: "Something interesting for everyone.",
-    icon: "05",
-    image:
-      "https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=600&q=80",
-  },
-];
-
 const reveal = {
   hidden: { opacity: 0, y: 35 },
   visible: {
@@ -99,6 +63,99 @@ const reveal = {
     transition: { duration: 0.7, ease: "easeOut" as const },
   },
 };
+
+/* ------------------------------------------------------------------
+   Swiper settings live OUTSIDE the component on purpose.
+   If they were written inline, every re-render of Home (for example
+   when the books finish loading) would create new objects, and Swiper
+   would reset its autoplay, so the slider stopped after one change.
+------------------------------------------------------------------- */
+const swiperModules = [Autoplay, Pagination, EffectFade];
+
+const autoplayConfig = {
+  delay: 4500,
+  disableOnInteraction: false,
+  pauseOnMouseEnter: false,
+};
+
+const paginationConfig = { clickable: true };
+
+/* memo() stops the hero from re-rendering when Home state changes */
+const HeroSlider = memo(function HeroSlider() {
+  return (
+    <section className="container-custom pt-7">
+      <Swiper
+        modules={swiperModules}
+        effect="fade"
+        speed={900}
+        autoplay={autoplayConfig}
+        pagination={paginationConfig}
+        rewind
+        className="booknook-hero overflow-hidden rounded-[24px] md:rounded-[32px]"
+      >
+        {slides.map((slide) => (
+          <SwiperSlide key={slide.number}>
+            <div
+              className="relative flex min-h-[520px] items-center overflow-hidden bg-cover bg-center px-7 py-16 sm:px-12 md:min-h-[620px] md:px-20"
+              style={{
+                backgroundImage: `linear-gradient(90deg, rgba(13,37,29,.96) 0%, rgba(13,37,29,.82) 48%, rgba(13,37,29,.15) 100%), url(${slide.image})`,
+              }}
+            >
+              {/* Decorative elements */}
+              <div className="pointer-events-none absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full border border-white/10" />
+              <div className="pointer-events-none absolute -right-12 -top-12 h-[300px] w-[300px] rounded-full border border-white/10" />
+
+              <motion.div
+                initial={{ opacity: 0, y: 35 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="relative z-10 max-w-[680px] text-white"
+              >
+                <div className="mb-6 flex items-center gap-3">
+                  <Sparkles size={17} className="text-[#e5b978]" />
+                  <span className="text-[10px] font-bold uppercase tracking-[4px] text-[#e5b978] sm:text-xs">
+                    {slide.tag}
+                  </span>
+                </div>
+
+                <h1 className="whitespace-pre-line font-serif text-[43px] font-semibold leading-[1.08] tracking-[-1.5px] sm:text-6xl md:text-[76px]">
+                  {slide.title}
+                  <span className="text-[#e5b978]">.</span>
+                </h1>
+
+                <p className="mt-7 max-w-lg text-sm leading-8 text-white/70 sm:text-base">
+                  {slide.text}
+                </p>
+
+                <Link
+                  href="/books"
+                  className="group mt-9 inline-flex items-center gap-4 rounded-full bg-[#e5b978] px-7 py-4 text-sm font-bold text-[#173b30] shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:bg-white"
+                >
+                  Browse Books
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                </Link>
+
+                <div className="mt-12 flex items-center gap-3">
+                  <span className="h-[2px] w-10 bg-[#e5b978]" />
+                  <span className="text-xs font-semibold tracking-[3px] text-white/60">
+                    BOOKNOOK / {slide.number}
+                  </span>
+                </div>
+              </motion.div>
+
+              <div className="absolute bottom-10 right-10 hidden font-serif text-[100px] font-bold text-white/[0.08] md:block">
+                {slide.number}
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </section>
+  );
+});
 
 export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -114,81 +171,13 @@ export default function Home() {
 
   return (
     <main className="overflow-hidden pb-10">
-
       {/* HERO SLIDER */}
-      <section className="container-custom pt-7">
-        <Swiper
-          modules={[Autoplay, Pagination, EffectFade]}
-          effect="fade"
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false,
-          }}
-          pagination={{ clickable: true }}
-          loop
-          className="booknook-hero overflow-hidden rounded-[24px] md:rounded-[32px]"
-        >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.number}>
-              <div
-                className="relative flex min-h-[520px] items-center overflow-hidden bg-cover bg-center px-7 py-16 sm:px-12 md:min-h-[620px] md:px-20"
-                style={{
-                  backgroundImage: `linear-gradient(90deg, rgba(13,37,29,.96) 0%, rgba(13,37,29,.82) 48%, rgba(13,37,29,.15) 100%), url(${slide.image})`,
-                }}
-              >
-                {/* Decorative elements */}
-                <div className="pointer-events-none absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full border border-white/10" />
-                <div className="pointer-events-none absolute -right-12 -top-12 h-[300px] w-[300px] rounded-full border border-white/10" />
+      <HeroSlider />
 
-                <motion.div
-                  initial={{ opacity: 0, y: 35 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
-                  className="relative z-10 max-w-[680px] text-white"
-                >
-                  <div className="mb-6 flex items-center gap-3">
-                    <Sparkles size={17} className="text-[#e5b978]" />
-                    <span className="text-[10px] font-bold uppercase tracking-[4px] text-[#e5b978] sm:text-xs">
-                      {slide.tag}
-                    </span>
-                  </div>
-
-                  <h1 className="whitespace-pre-line font-serif text-[43px] font-semibold leading-[1.08] tracking-[-1.5px] sm:text-6xl md:text-[76px]">
-                    {slide.title}
-                    <span className="text-[#e5b978]">.</span>
-                  </h1>
-
-                  <p className="mt-7 max-w-lg text-sm leading-8 text-white/70 sm:text-base">
-                    {slide.text}
-                  </p>
-
-                  <Link
-                    href="/books"
-                    className="group mt-9 inline-flex items-center gap-4 rounded-full bg-[#e5b978] px-7 py-4 text-sm font-bold text-[#173b30] shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:bg-white"
-                  >
-                    Browse Books
-                    <ArrowRight
-                      size={18}
-                      className="transition-transform group-hover:translate-x-1"
-                    />
-                  </Link>
-
-                  <div className="mt-12 flex items-center gap-3">
-                    <span className="h-[2px] w-10 bg-[#e5b978]" />
-                    <span className="text-xs font-semibold tracking-[3px] text-white/60">
-                      BOOKNOOK / {slide.number}
-                    </span>
-                  </div>
-                </motion.div>
-
-                <div className="absolute bottom-10 right-10 hidden font-serif text-[100px] font-bold text-white/[0.08] md:block">
-                  {slide.number}
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </section>
+      {/* TICKER STRIP */}
+      <div className="mt-10">
+        <Marquee />
+      </div>
 
       {/* INTRODUCTION STRIP */}
       <section className="container-custom py-12">
@@ -268,7 +257,7 @@ export default function Home() {
           </Link>
         </motion.div>
 
-                {loading ? (
+        {loading ? (
           <div className="grid min-h-[320px] place-items-center">
             <div className="flex flex-col items-center gap-4">
               <span className="loading loading-spinner loading-lg text-[#31594c]" />
@@ -291,99 +280,27 @@ export default function Home() {
             className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             {books.slice(0, 6).map((book) => (
-              <motion.div
-                key={book._id}
-                variants={reveal}
-              >
+              <motion.div key={book._id} variants={reveal}>
                 <BookCard book={book} />
               </motion.div>
             ))}
           </motion.div>
         ) : (
           <div className="rounded-3xl border border-dashed border-[#d9d2c4] bg-white/50 px-6 py-16 text-center">
-            <BookOpen
-              size={38}
-              className="mx-auto text-[#b8aa91]"
-            />
+            <BookOpen size={38} className="mx-auto text-[#b8aa91]" />
             <h3 className="mt-5 font-serif text-2xl font-bold text-[#24352c]">
               The shelves are waiting.
             </h3>
             <p className="mt-3 text-sm text-[#78857b]">
-              No books have been added yet. Be the first to
-              contribute to our library.
+              No books have been added yet. Be the first to contribute to our
+              library.
             </p>
           </div>
         )}
       </section>
 
-      {/* CATEGORY COLLECTION */}
-      <section className="bg-[#f0eee5] py-20">
-        <div className="container-custom">
-          <motion.div
-            variants={reveal}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="mb-10 text-center"
-          >
-            <p className="section-label">Find your interest</p>
-            <h2 className="mt-3 font-serif text-4xl font-bold text-[#24352c] md:text-5xl">
-              Explore Categories<span className="text-[#c69a56]">.</span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-[#7c887f]">
-              From timeless fiction to fascinating discoveries,
-              there is something for every curious mind.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.09, duration: 0.5 }}
-              >
-                <Link
-                  href={`/books?category=${category.name.toLowerCase()}`}
-                  className="group relative block h-[240px] overflow-hidden rounded-2xl bg-[#173b30] sm:h-[280px]"
-                >
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="absolute inset-0 h-full w-full object-cover opacity-65 transition duration-700 group-hover:scale-110 group-hover:opacity-45"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#10291f] via-[#10291f]/20 to-transparent" />
-
-                  <div className="absolute inset-x-0 bottom-0 p-5">
-                    <span className="text-[10px] font-bold tracking-[3px] text-[#e5b978]">
-                      COLLECTION {category.icon}
-                    </span>
-
-                    <h3 className="mt-2 font-serif text-2xl font-bold text-white">
-                      {category.name}
-                    </h3>
-
-                    <p className="mt-2 text-xs leading-5 text-white/75">
-                      {category.description}
-                    </p>
-
-                    <div className="mt-4 flex items-center gap-2 text-xs font-bold text-[#e5b978]">
-                      Explore
-                      <ArrowRight
-                        size={14}
-                        className="transition-transform group-hover:translate-x-2"
-                      />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* BOOKSHELF (category spines) */}
+      <BookShelf />
 
       {/* EXTRA SECTION 1 - BORROWING */}
       <section className="container-custom py-20">
@@ -393,15 +310,12 @@ export default function Home() {
 
             <h2 className="mt-4 font-serif text-4xl font-bold leading-tight text-[#24352c] md:text-5xl">
               Your next chapter
-              <span className="italic text-[#a77c42]">
-                {" "}starts here.
-              </span>
+              <span className="italic text-[#a77c42]"> starts here.</span>
             </h2>
 
             <p className="mt-6 max-w-md text-sm leading-8 text-[#69776e]">
-              Find a title, confirm your borrow, and enjoy a
-              week with your next read. Your borrowed shelf
-              keeps everything organized.
+              Find a title, confirm your borrow, and enjoy a week with your
+              next read. Your borrowed shelf keeps everything organized.
             </p>
 
             <Link
@@ -434,6 +348,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* READER NOTES */}
+      <ReaderReviews />
+
       {/* EXTRA SECTION 2 - SHARE BOOKS */}
       <section className="container-custom pb-16">
         <div className="relative overflow-hidden rounded-[28px] bg-[#173b30] px-8 py-14 text-center sm:px-14 md:py-20">
@@ -460,8 +377,8 @@ export default function Home() {
             </h2>
 
             <p className="mx-auto mt-5 max-w-lg text-sm leading-8 text-white/65">
-              Have a book worth sharing? Add it to BookNook and
-              help another reader discover their next favorite.
+              Have a book worth sharing? Add it to BookNook and help another
+              reader discover their next favorite.
             </p>
 
             <Link

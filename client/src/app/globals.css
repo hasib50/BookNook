@@ -271,6 +271,15 @@ main {
   box-shadow: 0 0 0 3px #648a751a;
 }
 
+/* Inputs that have an icon inside (must come after .input-field) */
+.input-field.has-icon-left {
+  padding-left: 46px;
+}
+
+.input-field.has-icon-right {
+  padding-right: 40px;
+}
+
 /* ========================================
    ANIMATIONS
 ======================================== */
@@ -571,4 +580,167 @@ body {
 [data-theme="dark"] .text-\[\#65806e\],
 [data-theme="dark"] .text-\[\#9a8e7b\] {
   color: #9db0a3;
+}
+
+/* ========================================
+   HOME — marquee, bookshelf, reader notes
+======================================== */
+
+/* Marquee (animated with JavaScript in Marquee.tsx) */
+.marquee {
+  overflow: hidden;
+  background: var(--primary-dark);
+  border-block: 1px solid rgba(229, 185, 120, 0.25);
+  padding: 15px 0;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.marquee-group {
+  display: flex;
+  flex-shrink: 0;
+}
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding-right: 28px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-style: italic;
+  color: #f5ead4;
+  white-space: nowrap;
+}
+.marquee-item i {
+  font-style: normal;
+  font-size: 14px;
+  color: var(--gold-light);
+}
+
+/* Bookshelf */
+.shelf-section {
+  background: var(--paper-dark);
+  padding: 80px 0 90px;
+}
+.shelf-scroll {
+  overflow-x: auto;
+  padding: 50px 4px 10px;
+}
+.shelf-case {
+  width: max-content;
+  margin-inline: auto;
+}
+.shelf-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 0 18px;
+}
+.spine {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 58px;
+  flex-shrink: 0;
+  padding: 18px 0 16px;
+  border-radius: 6px 6px 2px 2px;
+  background: var(--spine-bg);
+  color: var(--spine-fg);
+  box-shadow:
+    inset -6px 0 10px rgba(0, 0, 0, 0.18),
+    inset 3px 0 4px rgba(255, 255, 255, 0.08),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+  transform-origin: bottom center;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+a.spine:hover,
+a.spine:focus-visible {
+  transform: translateY(-18px) rotate(-1.5deg);
+  outline: none;
+}
+.spine-title {
+  writing-mode: vertical-rl;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.spine-num {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  opacity: 0.85;
+}
+.spine-band {
+  width: 70%;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.55;
+  box-shadow: 0 8px 0 currentColor;
+}
+.shelf-board {
+  height: 18px;
+  border-radius: 4px;
+  background: linear-gradient(#a9784c, #7d5232);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Reader notes */
+.note-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 34px 28px 26px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--card);
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    rgba(195, 154, 80, 0.14) 32px
+  );
+  box-shadow: 0 18px 40px rgba(36, 53, 44, 0.08);
+  transform: rotate(var(--tilt, 0deg));
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+.note-card:hover {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 26px 50px rgba(36, 53, 44, 0.14);
+}
+.note-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 84px;
+  height: 24px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(229, 185, 120, 0.55);
+  border: 1px solid rgba(195, 154, 80, 0.35);
+}
+.note-text {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-style: italic;
+  line-height: 32px;
+  color: var(--foreground);
+}
+.note-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: var(--primary-light);
+  color: var(--foreground);
+  font-family: Georgia, serif;
+  font-weight: 700;
 }
