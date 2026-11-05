@@ -42,22 +42,40 @@ export default function RegisterPage() {
 
     setBusy(true);
 
-    const result = await authClient.signUp.email({
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      image: form.image || undefined,
-    });
+    try {
+      const result = await authClient.signUp.email({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        image: form.image || undefined,
+      });
 
-    setBusy(false);
+      if (result.error) {
+        toast.error(result.error.message || "Registration failed.");
+        return;
+      }
 
-    if (result.error) {
-      toast.error(result.error.message || "Registration failed.");
-      return;
+      toast.success("Account created. Please sign in.");
+      router.push("/login");
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setBusy(false);
     }
+  }
 
-    toast.success("Account created. Please sign in.");
-    router.push("/login");
+  async function handleGoogleLogin() {
+    setBusy(true);
+
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } catch {
+      toast.error("Google sign-in failed. Please try again.");
+      setBusy(false);
+    }
   }
 
   return (
@@ -136,8 +154,9 @@ export default function RegisterPage() {
         </label>
 
         <button
+          type="submit"
           disabled={busy}
-          className="btn-primary mt-6 w-full justify-center"
+          className="btn-primary mt-6 w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
         >
           {busy ? "Creating…" : "Register"}
         </button>
@@ -148,19 +167,42 @@ export default function RegisterPage() {
           <span className="h-px flex-1 bg-[#e9e4d9]" />
         </div>
 
+        {/* Google Registration */}
         <button
           type="button"
-          onClick={async () => {
-            setBusy(true);
-            await authClient.signIn.social({
-              provider: "google",
-              callbackURL: "/",
-            });
-          }}
+          onClick={handleGoogleLogin}
           disabled={busy}
-          className="btn-outline-soft w-full justify-center"
+          className="btn-outline-soft flex w-full items-center justify-center gap-3 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Continue with Google
+          {/* Google Logo */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 48 48"
+            width="21"
+            height="21"
+            aria-hidden="true"
+          >
+            <path
+              fill="#4285F4"
+              d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.5-1.9 4.6-4 6v5h6.5c3.8-3.5 6.1-8.6 6.1-14.7Z"
+            />
+            <path
+              fill="#34A853"
+              d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.5-5c-1.8 1.2-4.1 2-7 2-5.3 0-9.8-3.6-11.4-8.4H5.9v5.1C9.3 39.5 16.1 44 24 44Z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M12.6 27.8a12 12 0 0 1 0-7.6v-5.1H5.9a20 20 0 0 0 0 17.8l6.7-5.1Z"
+            />
+            <path
+              fill="#EA4335"
+              d="M24 11.8c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 5.7 29.5 4 24 4 16.1 4 9.3 8.5 5.9 15.1l6.7 5.1c1.6-4.8 6.1-8.4 11.4-8.4Z"
+            />
+          </svg>
+
+          <span>
+            {busy ? "Connecting..." : "Continue with Google"}
+          </span>
         </button>
 
         <p className="mt-6 text-center text-sm text-[#78857b]">
