@@ -23,11 +23,14 @@ export const auth = betterAuth({
     autoSignIn: false,
   },
 
-  // Account Linking
+    // Account Linking
   account: {
     accountLinking: {
       enabled: true,
       trustedProviders: ["google"],
+      // Email verification is not used in this project, so local accounts
+      // are never marked verified. Without this, Google can't be linked.
+      requireLocalEmailVerified: false,
     },
   },
 
