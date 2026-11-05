@@ -1,6 +1,10 @@
 
 import Link from "next/link";
 
+export const metadata = {
+  title: "Page Not Found",
+};
+
 export default function NotFound() {
   return (
     <section className="site-container grid min-h-[65vh] place-items-center py-20 text-center">

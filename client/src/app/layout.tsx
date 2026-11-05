@@ -1,6 +1,4 @@
-
 import type { Metadata } from "next";
-// @ts-expect-error - CSS imports are handled by Next.js
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,8 +6,8 @@ import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: {
-    default: "BookNook | A Small Online Library",
-    template: "%s | BookNook",
+    default: "BookNook | Home",
+    template: "BookNook | %s",
   },
   description:
     "Explore a world of stories. Discover, share, and borrow your favorite books with BookNook.",
@@ -42,7 +40,7 @@ export default function RootLayout({
         />
       </head>
 
-      <body>
+      <body suppressHydrationWarning>
         <Toaster
           position="top-right"
           toastOptions={{
