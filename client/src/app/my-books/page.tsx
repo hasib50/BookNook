@@ -91,9 +91,10 @@ function MyBooksContent() {
                   <td>
                     <div className="flex items-center gap-3">
                       <img
-                        src={b.image}
-                        className="h-14 w-11 rounded object-cover"
-                      />
+  src={b.image}
+  alt={b.title}
+  className="h-14 w-11 rounded object-cover"
+/>
 
                       <div>
                         <b>{b.title}</b>

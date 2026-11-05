@@ -78,9 +78,10 @@ function BorrowContent() {
                   <td>
                     <div className="flex items-center gap-3">
                       <img
-                        src={b.bookImage}
-                        className="h-14 w-11 rounded object-cover"
-                      />
+  src={b.bookImage}
+  alt={b.bookTitle}
+  className="h-14 w-11 rounded object-cover"
+/>
 
                       <b>{b.bookTitle}</b>
                     </div>
