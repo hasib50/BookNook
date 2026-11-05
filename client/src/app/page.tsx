@@ -268,14 +268,14 @@ export default function Home() {
           </Link>
         </motion.div>
 
-        {loading ? (
-          <div className="grid grid-cols-2 gap-5 md:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-80 animate-pulse rounded-2xl bg-[#eae8df]"
-              />
-            ))}
+                {loading ? (
+          <div className="grid min-h-[320px] place-items-center">
+            <div className="flex flex-col items-center gap-4">
+              <span className="loading loading-spinner loading-lg text-[#31594c]" />
+              <p className="text-sm font-medium text-[#7c887f]">
+                Loading new arrivals...
+              </p>
+            </div>
           </div>
         ) : books.length > 0 ? (
           <motion.div
